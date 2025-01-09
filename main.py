@@ -15,15 +15,29 @@ from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from rl_vecstore import RisingLightVectorStore
+from langchain_community.document_loaders import WebBaseLoader
 
 print("Loading documents...")
 
+
+# List of URLs to load documents from
+# urls = [
+#     "https://lilianweng.github.io/posts/2023-06-23-agent/",
+#     "https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/",
+#     "https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/",
+# ]
+# # Load documents from the URLs
+# docs = [WebBaseLoader(url).load() for url in urls]
+# docs_list = [item for sublist in docs for item in sublist]
+
 docs = []
-for file in os.listdir("../docs"):
+path = "../mini-lsm/mini-lsm-book/src/"
+for file in os.listdir(path):
     if file.endswith(".md"):
         print(f"Loading {file}...")
-        docs.append(UnstructuredMarkdownLoader("../docs/" + file).load())
+        docs.append(UnstructuredMarkdownLoader(path + file, mode="elements").load())
 docs_list = [item for sublist in docs for item in sublist]
+
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
     chunk_size=250, chunk_overlap=0
 )
@@ -32,11 +46,16 @@ doc_splits = text_splitter.split_documents(docs_list)
 print("Creating embeddings...")
 
 # Create embeddings for documents and store them in a vector store
+# vectorstore = SKLearnVectorStore.from_documents(
+#     documents=doc_splits,
+#     embedding=OllamaEmbeddings(model="mxbai-embed-large"),
+# )
 vectorstore = RisingLightVectorStore.from_documents(
     documents=doc_splits,
-    embedding=OllamaEmbeddings(model="llama3.2"),
+    embedding=OllamaEmbeddings(model="mxbai-embed-large"),
+    skip_adding=True,
 )
-retriever = vectorstore.as_retriever(k=4)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 16})
 
 print("Creating model...")
 
