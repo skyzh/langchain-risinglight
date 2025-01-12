@@ -1,4 +1,4 @@
-# risinglight-vector-connector
+# langchain-risinglight
 
 Use RisingLight as a vector store for LangChain.
 
