@@ -44,8 +44,7 @@ class RisingLightVectorStore(VectorStore):
         return documents
 
     @classmethod
-    def from_texts(cls, texts, embedding, metadatas=None, skip_adding=False):
+    def from_texts(cls, texts, embedding, metadatas=None):
         vs = RisingLightVectorStore(embedding)
-        if not skip_adding:
-            vs.add_texts(texts, metadatas=metadatas)
+        vs.add_texts(texts, metadatas=metadatas)
         return vs

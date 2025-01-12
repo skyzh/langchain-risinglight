@@ -1,10 +1,13 @@
+#!/usr/bin/env python3
+
 # https://kleiber.me/blog/2024/08/04/demystifying-vector-stores-lanchain-vector-store-from-scratch/
 # https://www.datacamp.com/tutorial/llama-3-1-rag
 
 print("Downloading nltk data...")
 import nltk
-nltk.download('punkt_tab')
-nltk.download('averaged_perceptron_tagger_eng')
+
+nltk.download("punkt_tab")
+nltk.download("averaged_perceptron_tagger_eng")
 
 import os
 from langchain_community.document_loaders import UnstructuredMarkdownLoader
@@ -14,11 +17,10 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_ollama import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from rl_vecstore import RisingLightVectorStore
+from langchain_risinglight import RisingLightVectorStore
 from langchain_community.document_loaders import WebBaseLoader
 
 print("Loading documents...")
-
 
 # List of URLs to load documents from
 # urls = [
@@ -31,7 +33,7 @@ print("Loading documents...")
 # docs_list = [item for sublist in docs for item in sublist]
 
 docs = []
-path = "../mini-lsm/mini-lsm-book/src/"
+path = "../risinglight/docs/"
 for file in os.listdir(path):
     if file.endswith(".md"):
         print(f"Loading {file}...")
@@ -53,7 +55,6 @@ print("Creating embeddings...")
 vectorstore = RisingLightVectorStore.from_documents(
     documents=doc_splits,
     embedding=OllamaEmbeddings(model="mxbai-embed-large"),
-    skip_adding=True,
 )
 retriever = vectorstore.as_retriever(search_kwargs={"k": 16})
 
@@ -78,18 +79,22 @@ llm = ChatOllama(
 
 rag_chain = prompt | llm | StrOutputParser()
 
+
 class RAGApplication:
     def __init__(self, retriever, rag_chain):
         self.retriever = retriever
         self.rag_chain = rag_chain
+
     def run(self, question):
         # Retrieve relevant documents
         documents = self.retriever.invoke(question)
         # Extract content from retrieved documents
         doc_texts = "\\n".join([doc.page_content for doc in documents])
+        print(doc_texts)
         # Get the answer from the language model
         answer = self.rag_chain.invoke({"question": question, "documents": doc_texts})
         return answer
+
 
 rag_application = RAGApplication(retriever, rag_chain)
 

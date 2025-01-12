@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "langchain-risinglight"
+version = "0.1.0"
+description = "Langchain binding for RisingLight"
+authors = ["Alex Chi Z <iskyzh@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "langchain_risinglight" }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+langchain = "^0.3.14"
+
+
+[tool.poetry.group.dev.dependencies]
+langchain-community = "^0.3.14"
+langchain-ollama = "^0.2.2"
+scikit-learn = "^1.6.1"
+unstructured = "^0.16.12"
+markdown = "^3.7"
+tiktoken = "^0.8.0"
+maturin = "^1.8.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
