@@ -1,7 +1,0 @@
-langchain
-langchain_community
-langchain-ollama
-scikit-learn
-unstructured
-markdown
-tiktoken
