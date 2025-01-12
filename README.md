@@ -9,7 +9,7 @@ Use RisingLight as a vector store for LangChain.
 poetry new risinglight-test-environment
 cd risinglight-test-environment
 poetry add --dev maturin
-poetry install git+https://github.com/skyzh/langchain-risinglight
+poetry add git+https://github.com/skyzh/langchain-risinglight
 # Install risinglight in the virtual env
 poetry shell
 git clone https://github.com/risinglightdb/risinglight
